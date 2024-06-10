@@ -17,6 +17,8 @@ model User {
   user_id           String @db.VarChar(255) @id
   user_email        String @db.VarChar(200) @unique
   user_display_name  String @db.VarChar(255)
+
+  ListenSession    ListenSession[]
 }
 
 
@@ -24,4 +26,23 @@ model Song{
   song_id           String @db.VarChar(255) @id
   song_artist       String @db.VarChar(255) 
   song_album        String @db.VarChar(255) 
+
+  Session          Session[]
+}
+
+model Session {
+  listen_id        String
+  song_id          String
+  listenSession    ListenSession @relation(fields: [listen_id], references: [listen_id])
+  song             Song          @relation(fields: [song_id], references: [song_id])
+
+  @@id([listen_id, song_id])
+}
+
+model ListenSession {
+  listen_id        String      @id
+  user_id          String
+  user             User        @relation(fields: [user_id], references: [user_id])
+  
+  Session          Session[]
 }

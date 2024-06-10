@@ -22,6 +22,7 @@ exports.getUserData = async (req, res) => {
         Authorization: `Bearer ${accessToken}`
       }
     });
+    console.log (response.data)
     const {display_name, id, email} = response.data
     
     const checkUser = await prisma.user.findUnique({
@@ -61,6 +62,41 @@ exports.getUserData = async (req, res) => {
   
 };
 
+
+exports.getProfile = async (req, res) => {
+  const userId = req.params.userId; 
+
+  try {
+    const user = await prisma.user.findUnique({
+      where: {
+        spotifyId: userId, 
+      },
+      select: {
+        displayName: true, 
+        email: true,      
+      },
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        status: false,
+        message: "User not found",
+      });
+    }
+
+    res.status(200).json({
+      status: true,
+      message: "User profile retrieved successfully",
+      data: user, 
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      status: false,
+      message: "An unexpected error occurred on the server",
+    });
+  }
+};
 
 
 
