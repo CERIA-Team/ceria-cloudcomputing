@@ -62,18 +62,17 @@ exports.getUserData = async (req, res) => {
   
 };
 
-
 exports.getProfile = async (req, res) => {
   const userId = req.params.userId; 
 
   try {
     const user = await prisma.user.findUnique({
       where: {
-        spotifyId: userId, 
+        user_id: userId, 
       },
       select: {
-        displayName: true, 
-        email: true,      
+        user_display_name: true, 
+        user_email: true,      
       },
     });
 
