@@ -15,8 +15,11 @@ router.get("/", (req, res) => {
 router.post('/user', userController.getUserData);
 router.get('/user/:userId', auth, userController.getProfile)
 
-//
-router.post('/startSession', sessionController.startSession)
+//Seesion
+router.post('/listenSession/:listenId', sessionController.getlistenSessionById)
+router.get('/listenSessions', sessionController.getAllListenSession )
+router.get('/listenSession/:userId', sessionController.getlistenSessionByUser)
+
 
 
 module.exports = router

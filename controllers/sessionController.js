@@ -1,12 +1,15 @@
 const { response } = require("express");
 const prisma = require("../prisma/prisma");
 
-exports.startSession = async (req, res) => {
+
+// utk session setiap user
+exports.getlistenSessionById = async (req, res) => {
+    const listenId  = req.params.listenId;
+    const userId = req.body.user_id;
     try {
-        const user_id  = req.body.user_id;
         const listenSession = await prisma.listenSession.create({
             data: {
-                user_id: user_id
+                user_id: userId
             }
         })
         const songs = [
@@ -54,7 +57,6 @@ exports.startSession = async (req, res) => {
             "status": true,
             "message": "Song added to session",
             "data": {
-                "listen_id": listenSession.listen_id,
                 "session": session,
                 "data songs": songsData 
             }
@@ -65,3 +67,48 @@ exports.startSession = async (req, res) => {
         }    
 }
 
+// buat ngeliat semua listensession dari beberapa user
+exports.getAllListenSession = async (req, res) => {
+    try {
+        const sessions = await prisma.listenSession.findMany(
+            {
+                select: {
+                    listen_id: true,
+                    user_id: true,
+                  }
+        });
+        res.status(200).json({
+        "status": true,
+        "message": "Listen sessions retrieved successfully",
+        "data": sessions,
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Error retrieving listen sessions' });
+    }
+};
+
+
+// buat ngeliat semua listensession dari spesifik user
+exports.getlistenSessionByUser = async (req, res) => {
+    const userId = req.params.user_id; 
+    const sessions = await prisma.listenSession.findMany({
+        where: {
+            user_id: userId
+        },
+        select: {
+            listen_id: true 
+        }
+    });
+    if (!sessions) {
+        return res.status(404).json({
+            "status": false,
+            "message": "Listen session not found",
+        });
+    }
+    res.status(200).json({
+        "status": true,
+        "message": "Listen session retrieved successfully",
+        "data": sessions,
+    });
+};
