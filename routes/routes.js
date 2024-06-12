@@ -29,9 +29,8 @@ router.post('/like/', auth, likeController.likeSong)
 router.get('/likes/:userId', auth, likeController.getLikesByUser)
 
 
-
 // recommemd
-router.post('/recommend/', auth, modelController.recommendSong)
+router.post('/recommend',  modelController.recommendSong)
 
 
 module.exports = router
