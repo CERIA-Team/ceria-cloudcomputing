@@ -13,19 +13,25 @@ router.get("/", (req, res) => {
 const userController = require('../controllers/userController');
 const sessionController = require ('../controllers/sessionController');
 const likeController = require ('../controllers/likeController');
+const modelController = require ('../controllers/modelController');
 
 // User
 router.post('/user', userController.getUserData);
 router.get('/user/:userId', auth, userController.getProfile)
 
 //Session
-router.post('/listenSession/:listenId', sessionController.getlistenSessionById)
-router.get('/listenSessions', sessionController.getAllListenSession )
-router.get('/listenSession/:userId', sessionController.getlistenSessionByUser)
+router.post('/listenSession/:listenId', auth, sessionController.getlistenSessionById)
+router.get('/listenSessions', auth, sessionController.getAllListenSession )
+router.get('/listenSession/:userId', auth,  sessionController.getlistenSessionByUser)
 
 // Like songs
-router.post('/like/', likeController.likeSong)
-router.get('/likes/:userId', likeController.getLikesByUser)
+router.post('/like/', auth, likeController.likeSong)
+router.get('/likes/:userId', auth, likeController.getLikesByUser)
+
+
+
+// recommemd
+router.post('/recommend/', auth, modelController.recommendSong)
 
 
 module.exports = router
