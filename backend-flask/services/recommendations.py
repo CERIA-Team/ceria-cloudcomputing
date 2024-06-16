@@ -3,6 +3,7 @@ import numpy as np
 import joblib
 from sklearn.preprocessing import StandardScaler
 from sklearn.neural_network import MLPClassifier
+from model import *
 
 
 # Load the DataFrame from the saved CSV file
@@ -13,10 +14,10 @@ df_assign['intensity'] = df_assign['intensity'].apply(lambda x: eval(x) if isins
 df_assign['intensity'] = df_assign['intensity'].apply(lambda x: set(x) if isinstance(x, (list, np.ndarray)) else x)
 
 # Load the model and scaler
-with open('final_model.bin', 'rb') as model_file:
+with open('model/final_model.bin', 'rb') as model_file:
     model = joblib.load(model_file)
 
-with open('scaler.bin', 'rb') as scaler_file:
+with open('model/scaler.bin', 'rb') as scaler_file:
     scaler = joblib.load(scaler_file)
 
 
