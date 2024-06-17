@@ -13,7 +13,7 @@ router.get("/", (req, res) => {
 const userController = require('../controllers/userController');
 const sessionController = require ('../controllers/sessionController');
 const likeController = require ('../controllers/likeController');
-const modelController = require ('../controllers/modelController');
+const recomController = require ('../controllers/recomController');
 
 // User
 router.post('/user', userController.getUserData);
@@ -30,7 +30,7 @@ router.get('/likes/:userId', auth, likeController.getLikesByUser)
 
 
 // recommemd
-router.post('/recommend',  modelController.recommendSong)
+router.post('/recommend', recomController.recomSongs)
 
 
 module.exports = router
