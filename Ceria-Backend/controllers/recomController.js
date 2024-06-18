@@ -13,28 +13,35 @@ exports.recomSongs = async (req, res) => {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ HR: bpm })
+            body: JSON.stringify({ 
+                HR: bpm })
         });
 
-      
+        const contentType = response.headers.get('content-type');
 
-        const data = await response.json();
-        res.json(data);
+        if (!response.ok) {
+            const error = await response.text();
+            console.error('Error from recommendation service:', error);
+            res.status(500).json({ message: 'Error fetching recommendations' });
+            return;
+        }
+
+        const data = await response.text();
+        console.log(data); 
+
+        try {
+          const parsedData = JSON.parse(data); 
+          res.json(parsedData); 
+        } catch (error) {
+          console.error('Error parsing JSON:', error);
+          res.status(500).json({ message: 'Error parsing recommendations' });
+        }
 
     } catch (error) {
         console.error('Error calling recommendation model:', error);
         res.status(500).json({ 
-            // status: false,
+            status: false,
             message: "Failed to recommend songs"
         });
     }
 };
-
-
-  // if (!response.ok) {
-        //     // Just return the status code and a message
-        //     return res.status(response.status).json({
-        //         "status": false,
-        //         "message": "Failed to recommend songs" // Or a more specific error message 
-        //     });
-        // }
