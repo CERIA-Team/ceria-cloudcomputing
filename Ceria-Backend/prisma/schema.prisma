@@ -20,9 +20,7 @@ model User {
 
 
 model Song{
-  song_id           String @db.VarChar(255) @id 
-  song_artist       String @db.VarChar(255) 
-  song_album        String @db.VarChar(255) 
+  song_id           String @db.VarChar(255) @id  
   like              Int @default(0)
 
   Session          Session[]

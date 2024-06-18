@@ -20,7 +20,7 @@ router.post('/user', userController.getUserData);
 router.get('/user/:userId', auth, userController.getProfile)
 
 //Session
-router.post('/listenSession/:listenId', auth, sessionController.getlistenSessionById)
+router.post('/listenSession/:listenId', auth, sessionController.listenSessionById)
 router.get('/listenSessions', auth, sessionController.getAllListenSession )
 router.get('/listenSession/:userId', auth,  sessionController.getlistenSessionByUser)
 

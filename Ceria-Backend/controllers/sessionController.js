@@ -1,46 +1,76 @@
 const { response } = require("express");
 const prisma = require("../prisma/prisma");
-
+const recomSongController = require('../controllers/recomController');
 
 // utk session setiap user
-exports.getlistenSessionById = async (req, res) => {
+exports.listenSessionById = async (req, res) => {
     const listenId  = req.params.listenId;
     const userId = req.body.user_id;
+    const bpm = req.body.bpm;
+
+    if (!bpm) {
+        return res.status(400).json({ message: 'BPM is required' });
+      }
+
     try {
         const listenSession = await prisma.listenSession.create({
             data: {
                 user_id: userId
             }
-        })
-        const songs = [
-            { song_id: '12345', song_album: 'Song Album', song_artist: 'Artist A' },
-            { song_id: '67890', song_album: 'Song Album', song_artist: 'Artist B' },
-            { song_id: '32345', song_album: 'Song Album Q', song_artist: 'Artist C' },
-        ];
-        for (const song of songs) {
+        });
+        
+        // panggil model
+        let recommendedSongs = []; 
+        const BASE_URL = process.env.BASE_URL;
+        try {
+        const response = await fetch(`${BASE_URL}/recommend`, {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ HR: bpm }), // Send BPM to recommendation service
+        });
+
+        if (!response.ok) {
+            const error = await response.json();
+            console.error('Error from recommendation service:', error);
+            res.status(500).json({ message: 'Error fetching recommendations' });
+            return;
+          }
+
+        const data = await response.json();
+        recommendedSongs = data; // Assuming the response contains an array of songs 
+        } catch (error) {
+            console.error('Error calling recommendation model:', error);
+            res.status(500).json ({
+            message: 'Failed to recommend songs',
+        });
+            return; // Stop execution if recommendation fails
+        }
+    
+        for (const songId of recommendedSongs) {
         const existingSong = await prisma.song.findUnique({
             where: { 
-                song_id: song.song_id 
+                song_id: songId 
             }
         });
+
         // dilihat apakah ada lagu di dalam database
         if (!existingSong){
             await prisma.song.create({
                 data: {
-                        song_id: song.song_id,
-                        song_artist: song.song_artist,
-                        song_album: song.song_album 
+                        song_id: songId,
                     }    
                 }); 
             } else {
                 console.log(`Lagu dengan ID ${song.song_id} sudah ada di database.`);
             }
         }    
-
+        
         //nambahin lagu ke db session
         const session = await prisma.session.createMany({
-            data: songs.map(song => ({
-                song_id: song.song_id,
+            data: recommendedSongs.map(songId => ({
+                song_id: songId,
                 listen_id: listenSession.listen_id
             })),
         });
@@ -49,7 +79,8 @@ exports.getlistenSessionById = async (req, res) => {
         const songsData = await prisma.song.findMany({
             where: {
                 song_id: {
-                    in: songs.map(song => song.song_id)
+                    in: recommendedSongs.filter(
+                        songId => songId !== undefined).map(songId => songId)
                 }
             }
         });
@@ -112,3 +143,4 @@ exports.getlistenSessionByUser = async (req, res) => {
         "data": sessions,
     });
 };
+

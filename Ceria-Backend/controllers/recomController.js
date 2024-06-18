@@ -16,13 +16,7 @@ exports.recomSongs = async (req, res) => {
             body: JSON.stringify({ HR: bpm })
         });
 
-        if (!response.ok) {
-            const errorText = await response.text();
-            return res.status(response.status).json({
-                status: false,
-                message: `Failed to recommend songs: ${errorText || 'Unknown error'}`
-            });
-        }
+      
 
         const data = await response.json();
         res.json(data);
@@ -30,8 +24,17 @@ exports.recomSongs = async (req, res) => {
     } catch (error) {
         console.error('Error calling recommendation model:', error);
         res.status(500).json({ 
-            status: false,
+            // status: false,
             message: "Failed to recommend songs"
         });
     }
 };
+
+
+  // if (!response.ok) {
+        //     // Just return the status code and a message
+        //     return res.status(response.status).json({
+        //         "status": false,
+        //         "message": "Failed to recommend songs" // Or a more specific error message 
+        //     });
+        // }
