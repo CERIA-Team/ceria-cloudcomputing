@@ -58,7 +58,7 @@ exports.recomSongs = async (req, res) => {
             },
           });
         } else {
-          console.log(`Lagu dengan ID ${song.song_id} sudah ada di database.`);
+          console.log(`Lagu dengan ID ${existingSong.song_i} sudah ada di database.`);
         }
       }
       await prisma.session.createMany({
