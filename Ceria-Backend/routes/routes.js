@@ -20,9 +20,11 @@ router.post('/user', userController.getUserData);
 router.get('/user/:userId', auth, userController.getProfile)
 
 //Session
-router.post('/listenSession/:listenId', auth, sessionController.listenSessionById)
-router.get('/listenSessions', auth, sessionController.getAllListenSession )
-router.get('/listenSession/:userId', auth,  sessionController.getlistenSessionByUser)
+router.post("/listenSession/", auth, sessionController.startSession);
+router.get("/listenSession/", auth, sessionController.getlistenSessionByUser);
+router.get(
+  "/listenSession/:listen_id",auth,sessionController.getSongsInSession);
+
 
 // Like songs
 router.post('/like/', auth, likeController.likeSong)
@@ -30,7 +32,7 @@ router.get('/likes/:userId', auth, likeController.getLikesByUser)
 
 
 // recommemd
-router.post('/recommend', recomController.recomSongs)
+router.post("/recommend", auth, recomController.recomSongs);
 
 
 module.exports = router
